@@ -29,17 +29,24 @@ require File.expand_path(File.dirname(__FILE__) + "/neo")
 #
 # Your goal is to write the score method.
 
+DiceValues = Hash.new(0)
+DiceValues[1] = 100
+DiceValues[5] = 50
+
 def calc_threes(dice_tally)
-  threes = dice_tally.select { |k, v| v >= 3 }.map { |k, v| k }
+  threes = dice_tally.select { |_, v| v >= 3 }.keys
   threes_score = threes.map { |v| v == 1 ? 1000 : v * 100 }.sum
-  updated_tally = dice_tally.map { |k, v| threes.include? k ? v - 3 : v }
+  updated_tally = dice_tally.map do |k, v|
+    new_val = threes.include?(k) ? v - 3 : v
+    [k, new_val]
+  end.to_h
   [updated_tally, threes_score]
 end
 
 def score(dice)
   tally = dice.tally
   updated_tally, threes_score = calc_threes(tally)
-  threes_score
+  threes_score + updated_tally.map { |k, v| DiceValues[k] * v }.sum
 end
 
 class AboutScoringProject < Neo::Koan
