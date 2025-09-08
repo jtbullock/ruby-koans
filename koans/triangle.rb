@@ -17,11 +17,12 @@
 # * A triangle should not have any sides of length 0 or negative.
 # * Any two sides of a triangle should add up to more than the third side.
 
-#
 def triangle(a, b, c)
   sides = [a, b, c]
 
   if sides.any? { |l| l <= 0 }
+    raise TriangleError
+  elsif a+b <= c || b+c <= a || a+c <= b
     raise TriangleError
   elsif a == b && b == c
     :equilateral
